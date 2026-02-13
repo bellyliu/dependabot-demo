@@ -23,36 +23,17 @@ updates:
       day: "monday"
       time: "07:00"
       timezone: "Asia/Singapore"
-    # Grouping: Bundles all minor/patch updates into one PR
+    # Group minor/patch updates into one PR
+    # Major updates will get individual PRs (not in any group)
     groups:
-      python-dependencies:
+      python-minor-patch:
         patterns:
           - "*"
         update-types:
           - "minor"
           - "patch"
     labels:
-      - "minor-or-patch"
-      - "pip"
-    commit-message:
-      prefix: "(pip) "
-    assignees:
-      - "bellyliu"
-  
-  # PR for Major update won't be grouped
-  - package-ecosystem: "pip"
-    directory: "/python-app"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "07:00"
-      timezone: "Asia/Singapore"
-    ignore:
-      - update-types: 
-          - version-update:semver-patch
-          - version-update:semver-minor
-    labels:
-      - "major"
+      - "dependencies"
       - "pip"
     commit-message:
       prefix: "(pip) "
