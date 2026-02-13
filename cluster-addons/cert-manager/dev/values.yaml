@@ -1,0 +1,7 @@
+config:
+  namespace: cert-manager
+
+cert-manager:
+  crds:
+    enabled: true
+    keep: true

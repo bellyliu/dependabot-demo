@@ -1,0 +1,41 @@
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: monitoring
+spec:
+  template:
+    metadata:
+      labels:
+        app: monitoring
+    spec:
+      expireAfter: 720h
+      requirements:
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values: ["ap-southeast-1c"]
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "t"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["2"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: monitoring
+      taints:
+        - effect: NoSchedule
+          key: monitoring
+          value: "true"
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 3600s

@@ -1,0 +1,18 @@
+config:
+  namespace: karpenter
+
+karpenter:
+  settings:
+    clusterName: rewardz-eks
+    interruptionQueue: rewardz-eks-karpenter-sqs
+    featureGates:
+      spotToSpotConsolidation: true
+      nodeRepair: true
+  controller:
+    resources:
+      requests:
+        cpu: 1
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 1Gi

@@ -1,0 +1,7 @@
+config:
+  namespace: argocd
+
+argo-cd:
+  server:
+    redisSecretInit:
+      enabled: false

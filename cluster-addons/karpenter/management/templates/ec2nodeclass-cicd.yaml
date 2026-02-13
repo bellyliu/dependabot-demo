@@ -1,0 +1,30 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: cicd
+spec:
+  role: "KarpenterNodeRole"
+  metadataOptions:
+    httpEndpoint: enabled
+    httpProtocolIPv6: disabled
+    httpPutResponseHopLimit: 2
+    httpTokens: required
+  amiSelectorTerms:
+    - alias: "bottlerocket@v1.52.0"
+  subnetSelectorTerms:
+    - id: subnet-0ff499df281a32348
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: rewardz-eks
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeType: gp3
+        volumeSize: 4Gi
+        deleteOnTermination: true
+    # Bottlerocket data volume
+    - deviceName: /dev/xvdb
+      ebs:
+        volumeType: gp3
+        volumeSize: 30Gi
+        deleteOnTermination: true
