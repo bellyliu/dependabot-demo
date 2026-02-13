@@ -16,3 +16,6 @@ karpenter:
       limits:
         cpu: 1
         memory: 1Gi
+  image:
+    repository: public.ecr.aws/karpenter/controller
+    tag: 1.9.0
