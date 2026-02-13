@@ -1,8 +1,8 @@
 version: 2
 updates:
-  # Maintain dependency of Jenkins Pipeline
+  # Maintain dependency of Python App Docker image
   - package-ecosystem: "docker"
-    directory: "pipeline"
+    directory: "/python-app"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -10,8 +10,8 @@ updates:
       timezone: "Asia/Singapore"
     labels:
       - "dependencies"
-      - "pipeline"
+      - "dockerfile"
     commit-message:
-      prefix: "[pipeline] "
+      prefix: "(dockerfile) "
     assignees:
       - "bellyliu"
