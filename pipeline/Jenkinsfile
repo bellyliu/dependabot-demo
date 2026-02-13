@@ -1,0 +1,97 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  tolerations:
+    - key: "cicd"
+      operator: "Exists"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: app
+            operator: In
+            values: ['cicd']
+  containers:
+    - name: nerdctl
+      image: MY-PRIVATE-ECR.dkr.ecr.ap-south-1.amazonaws.com/nerdctl:v2.1.6
+      imagePullPolicy: Always
+      command:
+        - cat
+      tty: true
+      resources:
+        requests:
+          memory: "1024Mi"
+          cpu: "1024m"
+          ephemeral-storage: "5Gi"
+        limits:
+          memory: "1024Mi"
+          cpu: "1024m"
+          ephemeral-storage: "10Gi"
+      volumeMounts:
+      - name: containerd-socket
+        mountPath: /run/containerd/containerd.sock
+      - name: buildkit-socket
+        mountPath: /run/buildkit
+    - name: buildkitd
+      image: moby/buildkit:v0.14.0
+      imagePullPolicy: Always
+      args:
+        - --addr
+        - unix:///run/buildkit/buildkitd.sock
+      readinessProbe:
+        exec:
+          command:
+            - buildctl
+            - debug
+            - workers
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      securityContext:
+        privileged: true
+      resources:
+        requests:
+          memory: "2048Mi"
+          cpu: "2048m"
+          ephemeral-storage: "10Gi"
+        limits:
+          memory: "2048Mi"
+          cpu: "2048m"
+          ephemeral-storage: "20Gi"
+      volumeMounts:
+        - name: buildkit-socket
+          mountPath: /run/buildkit
+  volumes:
+    - name: containerd-socket
+      hostPath:
+        path: /run/containerd/containerd.sock
+        type: Socket
+    - name: buildkit-socket
+      emptyDir: {}
+''' }
+  }
+
+  options {
+    ansiColor('xterm')
+    skipDefaultCheckout true
+  }
+
+  stages {
+    stage ('Init') {
+      steps {
+        container('nerdctl') {
+          script {
+            sh """
+              echo doStuffHere
+            """            
+          }
+        }
+      }
+    }
+  }
+}
