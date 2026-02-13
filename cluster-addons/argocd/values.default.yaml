@@ -4,6 +4,9 @@ config:
 argo-cd:
   global:
     domain: argocd.skordev.com
+    image:
+      repository: quay.io/argoproj/argocd
+      tag: "v2.14.11"
 
   server:
     extraArgs:
