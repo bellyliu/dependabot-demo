@@ -42,7 +42,7 @@ updates:
   
   - package-ecosystem: "helm"
     directories: 
-    - "/cluster-addons/**/"
+    - "/cluster-addons/**/**/"
     schedule:
       interval: "weekly"
       day: "monday"
