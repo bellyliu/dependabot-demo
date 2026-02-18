@@ -42,7 +42,10 @@ updates:
   
   - package-ecosystem: "helm"
     directories: 
-    - "/cluster-addons/**/**/"
+      - "/cluster-addons/argocd/management"
+      - "/cluster-addons/cert-manager/dev"
+      - "/cluster-addons/cert-manager/prod"
+      - "/cluster-addons/karpenter/management"
     schedule:
       interval: "weekly"
       day: "monday"
