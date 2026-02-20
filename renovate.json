@@ -5,13 +5,22 @@
     ":dependencyDashboard",
     ":rebaseStalePrs"
   ],
-  "schedule": ["after 7am on Monday"],
-  "labels": ["dependencies", "renovate"],
-  "assignees": ["bellyliu"],
+  "schedule": [
+    "after 7am on Monday"
+  ],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "assignees": [
+    "bellyliu"
+  ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["cluster-addons/.*/values.yaml$"],
+      "managerFilePatterns": [
+        "/cluster-addons/.*/values.yaml$/"
+      ],
       "matchStrings": [
         "repository:\\s*(?<depName>[^\\n]+)\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\n]+)"
       ],
