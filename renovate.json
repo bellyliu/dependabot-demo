@@ -4,13 +4,15 @@
   "schedule": ["after 7am on Monday"],
   "labels": ["dependencies", "renovate"],
   "assignees": ["bellyliu"],
-  "packageRules": [
+  "regexManagers": [
     {
-      "matchDatasources": ["docker"],
-      "matchPaths": [
-        "cluster-addons/**/values.yaml"
+      "fileMatch": ["cluster-addons/.*/values.yaml$"],
+      "matchStrings": [
+        "repository:\\s*(?<depName>[^\\n]+)\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\n]+)"
       ],
-      "extractVersion": "(?<currentValue>tag:\s*)(?<currentValue>.+)",
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "{{{depName}}}",
+      "versioningTemplate": "docker",
       "groupName": "Helm values image tags"
     }
   ]
