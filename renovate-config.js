@@ -1,6 +1,6 @@
 module.exports = {
   platform: 'github',
   onboarding: false,
-  repositories: ['belly-rewardz/dependabot-demo'],
+  repositories: ['bellyliu/dependabot-demo'],
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
 };
