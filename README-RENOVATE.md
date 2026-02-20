@@ -1,36 +1,41 @@
-# Renovate Bot Setup for Helm values.yaml Image Tags
+# Renovate Bot — Helm `values.yaml` Image Tags
 
-## What does this do?
-This setup enables Renovate Bot to automatically update container image tags in your `values.yaml` files under `cluster-addons/**/values.yaml`.
+This repo uses Renovate to update container image tags declared in Helm `values.yaml` files under `cluster-addons/*/values.yaml`.
 
-## How to set up
+What was added
+- Workflow: `.github/workflows/renovate.yml` — runs Renovate weekly and can be triggered manually.
+- Config: `renovate.json` — uses a `regexManagers` entry that extracts `repository:` + `tag:` pairs from `cluster-addons/*/values.yaml` and treats them as Docker dependencies.
 
-1. **GitHub Actions Workflow**
-   - File: `.github/workflows/renovate.yml`
-   - Runs Renovate weekly on Mondays at 07:00 (Asia/Singapore time).
-   - You can also trigger it manually via GitHub Actions.
+How it works (short)
+- Renovate scans each `cluster-addons/<chart>/values.yaml` and applies the configured regex manager.
+- The regex manager extracts the image repository line and the `tag:` line, uses the `docker` datasource, and creates PRs when newer tags exist.
+- PRs are grouped under the configured `groupName` ("Helm values image tags") and are labeled and assigned per `renovate.json`.
 
-2. **Renovate Config**
-   - File: `renovate.json`
-   - Uses the base config and applies to all `values.yaml` files under `cluster-addons/`.
-   - Custom rule extracts and updates the `tag:` field for Docker images.
-   - PRs will be labeled `dependencies` and `renovate` and assigned to `bellyliu`.
+Regex manager details
+- `fileMatch`: `cluster-addons/.*/values.yaml$`
+- `matchStrings` (used in `renovate.json`):
+   - `repository:\s*(?<depName>[^\n]+)\s*\n\s*tag:\s*(?<currentValue>[^\n]+)`
+- This captures the full repository (may include registry, e.g. `quay.io/jetstack/cert-manager-controller`) as `depName` and `tag` as `currentValue`.
+- Renovate then queries the `docker` datasource for available tags and proposes updates.
 
-## How it works
-- Renovate scans all `cluster-addons/**/values.yaml` files.
-- It looks for lines like `tag: v1.19.3` and checks for newer tags on Docker Hub or Quay.
-- When a new tag is available, Renovate creates a PR to update the tag.
-- All PRs are grouped under "Helm values image tags".
+How to run / test
+- The workflow runs automatically in GitHub Actions. To trigger manually, use the Actions tab.
+- Local test (run from repo root):
 
-## Example PR
-If your `values.yaml` contains:
-```yaml
-image:
-  repository: quay.io/jetstack/cert-manager-controller
-  tag: v1.19.3
+```bash
+docker run --rm -v "$(pwd)":/repos ghcr.io/renovatebot/renovate:latest \
+   --config-file=/repos/renovate.json --log-level info --autodiscover=false
 ```
-Renovate will propose a PR to update `tag: v1.19.3` to the latest available version.
 
-## Notes
-- You can customize the schedule, labels, and assignees in `renovate.json`.
-- For more advanced matching, see the [Renovate documentation](https://docs.renovatebot.com/).
+Permissions and notes
+- When running in GitHub Actions, the `renovatebot/github-action` step uses the provided `GITHUB_TOKEN`. Ensure it has write access to create branches and PRs.
+- The regex manager is brittle to unusual formatting; if your `values.yaml` uses different indentation or keys (e.g. `image.tag` instead of `tag:` on the next line), update the `matchStrings` accordingly.
+- Renovate will handle registries like Quay or ECR; if you encounter auth errors when querying a registry, check registry access rules and rate limits.
+
+Customization
+- Schedule, labels, assignees, and grouping live in `renovate.json` — edit them to fit your workflow.
+
+Reference
+- Renovate regex managers: https://docs.renovatebot.com/config-presets/#regexmanager
+
+If you want, I can run a local test and share the logs, or tweak the regex to match alternate `values.yaml` layouts.
