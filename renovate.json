@@ -14,19 +14,5 @@
   ],
   "assignees": [
     "bellyliu"
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/cluster-addons/.*/values.yaml$/"
-      ],
-      "matchStrings": [
-        "repository:\\s*(?<depName>[^\\n]+)\\s*\\n\\s*tag:\\s*(?<currentValue>[^\\n]+)"
-      ],
-      "datasourceTemplate": "docker",
-      "depNameTemplate": "{{{depName}}}",
-      "versioningTemplate": "docker"
-    }
   ]
 }
