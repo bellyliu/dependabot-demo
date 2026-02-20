@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "schedule": ["after 7am on Monday"],
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["bellyliu"],
+  "packageRules": [
+    {
+      "matchDatasources": ["docker"],
+      "matchPaths": [
+        "cluster-addons/**/values.yaml"
+      ],
+      "extractVersion": "(?<currentValue>tag:\s*)(?<currentValue>.+)",
+      "groupName": "Helm values image tags"
+    }
+  ]
+}
