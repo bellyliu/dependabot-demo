@@ -7,4 +7,4 @@ cert-manager:
     keep: true
   image:
     repository: quay.io/jetstack/cert-manager-controller
-    tag: v1.19.3
+    tag: v1.19.4
